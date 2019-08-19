@@ -2,16 +2,10 @@ server:
   port: 8080
 
 spring:
-  datasource:
-    url: jdbc:hsqldb:mem:testdb;INIT=RUNSCRIPT FROM 'classpath:sql/tables_hsqldb.sql'
-    username: sa
-    password:
-    driver-class-name: org.hsqldb.jdbc.JDBCDriver 
-    platform: hsqldb
   jpa:
     database-platform: org.hibernate.dialect.HSQLDialect
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     properties:
       hibernate:
         show_sql: true
@@ -21,22 +15,49 @@ spring:
         cache.use_second_level_cache: false 
         cache.use_query_cache: false
         generate_statistics: false
-        cache.region.factory_class: org.hibernate.cache.ehcache.SingletonEhCacheRegionFactory
-
-org:
+#        cache.region.factory_class: org.hibernate.cache.ehcache.SingletonEhCacheRegionFactory
+qrtz:
+  org:
     quartz:
-        scheduler:
-            instanceId: AUTO
-            instanceName: kingbbode-example
-            makeSchedulerThreadDaemon : true
-            interruptJobsOnShutdown  : true
-        jobStore:
-            clusterCheckinInterval: 20000
-            driverDelegateClass: org.quartz.impl.jdbcjobstore.HSQLDBDelegate
-            isClustered: true
-            misfireThreshold: 60000
-            tablePrefix: QRTZ_
-            useProperties: false
-        threadPool:
-            threadCount: 5
-            makeThreadsDaemons : true         
+      scheduler:
+        instanceId: AUTO
+        instanceName: qrtz-instance
+        makeSchedulerThreadDaemon : true
+        interruptJobsOnShutdown  : true
+      jobStore:
+        class: org.quartz.impl.jdbcjobstore.JobStoreTX
+        clusterCheckinInterval: 20000
+        driverDelegateClass: org.quartz.impl.jdbcjobstore.HSQLDBDelegate
+        isClustered: false
+        misfireThreshold: 60000
+        tablePrefix: QRTZ_
+        useProperties: false
+        dataSource: ds
+      dataSource: 
+        ds: 
+          URL: jdbc:hsqldb:mem:testdb
+          driver: org.hsqldb.jdbc.JDBCDriver
+          user: sa
+          password:
+          maximumPoolSize: 10
+          validationTimeout: 5000
+          provider: hikaricp  
+          idleTimeout: 0      
+      threadPool:
+        threadCount: 5
+        makeThreadsDaemons: true       
+      
+ # Logging settings.
+logging:
+  file: logs/application.log
+  # The default level of all loggers. Can be OFF, ERROR, WARN, INFO, DEBUG, TRACE, or ALL.
+  level:
+    ROOT: ALL
+    org.springframework.jdbc: DEBUG
+    com.rmpksoft.qrtz: INFO
+    org.hibernate: DEBUG
+  appenders:
+    type: console
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"      
