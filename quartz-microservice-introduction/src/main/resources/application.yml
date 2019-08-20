@@ -1,1 +1,58 @@
+---
+server:
+  port: 8080
+---
+spring:
+  profiles: local, default
+  datasource:
+    url: jdbc:hsqldb:mem:test-db
+    username: sa
+    password:
+    driver-class-name: org.hsqldb.jdbc.JDBCDriver 
+    platform: hsqldb
+  jpa:
+    database-platform: org.hibernate.dialect.HSQLDialect
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        show_sql: true
+        type: trace
+        use_sql_comments: true
+        format_sql: true 
+        cache.use_second_level_cache: false 
+        cache.use_query_cache: false
+        generate_statistics: false
+        cache.region.factory_class: org.hibernate.cache.ehcache.SingletonEhCacheRegionFactory
+---
+spring:
+  profiles: postgres
+  devtools:
+    remote:
+      secret: secretkey
+    restart:
+      enabled: true
+    livereload:
+      enabled: true
 
+# datasource
+datasource:
+  url: jdbc:postgresql://database:5432/postgres
+  username: postgres
+  password: postgres
+  driverClassName: org.postgresql.Driver
+  defaultSchema:
+  maxConnections: 300
+  initialConnections: 20
+  maxAge: 30000
+  testOnBorrow: true
+  testWhileIdle:  true
+  timeBetweenEvictionRunsMillis: 60000
+  validationQuery: SELECT 1
+  minPoolSize: 6
+  maxPoolSize: 15
+  hibernate:
+    hbm2ddl.method: update
+    show_sql: true
+    format_sql: true
+    dialect: org.hibernate.dialect.PostgreSQLDialect              

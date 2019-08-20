@@ -13,7 +13,7 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 @Configuration
 public class DbConfig {
 	
-	private static final Logger log = LoggerFactory.getLogger(DbConfig.class);
+	private final Logger log = LoggerFactory.getLogger(this.getClass().getSimpleName());
 	
 	@Bean
 	public DataSource dataSource() {

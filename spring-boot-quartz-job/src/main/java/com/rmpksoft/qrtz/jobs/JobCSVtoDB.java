@@ -10,35 +10,28 @@ import org.quartz.SchedulerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext;
-import org.springframework.context.ApplicationContext;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
-import com.rmpksoft.qrtz.cfg.JobSchedulerConfig;
 import com.rmpksoft.qrtz.service.StudentService;
-import com.rmpksoft.qrtz.service.StudentServiceImpl;
 
+@Component
+@Scope(value = BeanDefinition.SCOPE_PROTOTYPE)
 @DisallowConcurrentExecution
 @PersistJobDataAfterExecution
 public class JobCSVtoDB extends AbstractBaseJob{
 	
+	private final Logger log = LoggerFactory.getLogger(this.getClass().getSimpleName());
+	
 	@Autowired
 	private StudentService studentService;
 	
-	private static final Logger log = LoggerFactory.getLogger(JobSchedulerConfig.class);
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
-		log.info("fffffffffffffffffffffffffffffffffffffffffffffffffff==" + studentService);
-		
-		try {
-			ApplicationContext object = (ApplicationContext) context.getScheduler().getContext().get("applicationContext");
-			String[] beanDefinitionNames = object.getBeanDefinitionNames();
-			for(String n:beanDefinitionNames) {
-				//System.out.println(n);
-			}
-			
-		} catch (SchedulerException e1) {
-			e1.printStackTrace();
-		}
+		studentService.getStudentNameList().forEach(e->{
+			log.info("-->" + e);
+		});
 		
 		JobDataMap mergedJobDataMap = context.getMergedJobDataMap();
         SchedulerContext schedCtxt = null;

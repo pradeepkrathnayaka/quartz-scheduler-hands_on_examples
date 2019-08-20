@@ -10,11 +10,11 @@ import org.slf4j.LoggerFactory;
 
 public abstract class AbstractBaseJob implements Job {
 
-	private static Logger LOG = LoggerFactory.getLogger(AbstractBaseJob.class);
+	private final Logger log = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
-		LOG.info("Hello World! - " + new Date());
+		log.info("Parent JOB! - " + new Date());
 	}
 
 }
